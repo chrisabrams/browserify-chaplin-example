@@ -228,3 +228,4 @@ module.exports = (grunt) ->
   .forEach(grunt.loadTasks)
 
   grunt.registerTask 'foo', ['clean', 'copy', 'handlebars', 'browserify']
+  grunt.registerTask 'default', 'foo'
