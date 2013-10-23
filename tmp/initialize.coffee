@@ -1,9 +1,6 @@
 Application = require './application'
 routes = require './routes'
-$ = require 'jquery'
-Backbone = require 'backbone'
-
-Backbone.$ = $
+HomeController = require './controllers/home-controller'
 
 # Initialize the application on DOM ready event.
 $ ->

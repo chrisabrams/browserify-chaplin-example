@@ -10,6 +10,17 @@ module.exports = (grunt) ->
       ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n'
 
     browserify:
+      # common:
+      #   src: ['app/controllers/*.coffee']
+      #   dest: 'tmp/controllers.js'
+      #   options:
+      #     transform: ['coffeeify']
+      #     extensions: ['.coffee']
+      #     aliasMappings: [
+      #       cwd: 'app/controllers'
+      #       src: ['**/*.coffee']
+      #       dest: 'controllers'
+      #     ]
       app:
         files:
           'public/js/app.js': [
@@ -20,6 +31,12 @@ module.exports = (grunt) ->
           debug: true
           transform: ['coffeeify']
           extensions: ['.coffee']
+          insertGlobals: true
+          aliasMappings: [
+            cwd: 'app/controllers'
+            src: ['**/*.coffee']
+            dest: 'controllers'
+          ]
           shim:
             jquery:
               path: 'vendor/jquery.js'
