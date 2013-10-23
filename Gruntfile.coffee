@@ -29,7 +29,7 @@ module.exports = (grunt) ->
           ]
           shim:
             jquery:
-              path: 'vendor/jquery.js'
+              path: 'bower_components/jquery/jquery.js'
               exports: '$'
 
     clean:
