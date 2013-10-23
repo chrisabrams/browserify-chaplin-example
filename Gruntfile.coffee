@@ -13,38 +13,31 @@ module.exports = (grunt) ->
       app:
         files:
           'public/js/app.js': [
+            'tmp/**/*.coffee'
             'tmp/**/*.js'
           ]
         options:
           debug: true
-          external: ['jquery', 'underscore', 'backbone', 'handlebars', 'chaplin']
-
-      vendor:
-        dest: 'public/js/vendor.js'
-        src: [
-          #'vendor/jquery.js'
-          #'vendor/underscore.js'
-          #'vendor/backbone.js'
-          #'vendor/handlebars.js'
-          #'vendor/chaplin.js'
-        ]
-        options:
+          transform: ['coffeeify']
+          extensions: ['.coffee']
           shim:
-            backbone:
-              path: 'vendor/backbone.js'
-              exports: 'backbone'
-            chaplin:
-              path: 'vendor/chaplin.js'
-              exports: 'chaplin'
-            handlebars:
-              path: 'vendor/handlebars.js'
-              exports: 'handlebars'
             jquery:
               path: 'vendor/jquery.js'
               exports: '$'
-            underscore:
-              path: 'vendor/underscore.js'
-              exports: '_'
+            # underscore:
+            #   path: 'vendor/lodash.js'
+            #   exports: '_'
+            # backbone:
+            #   path: 'vendor/backbone.js'
+            #   exports: 'Backbone'
+            #   depends:
+            #     jquery: '$'
+            #     underscore: '_'
+            # chaplin:
+            #   path: 'vendor/chaplin.js'
+            #   exports: 'Chaplin'
+            #   depends:
+            #     backbone: 'Backbone'
 
     clean:
       dist: ['public/', 'tmp/']
@@ -81,6 +74,16 @@ module.exports = (grunt) ->
           'public/js/app.js': '<%= jsFiles %>'
 
     copy:
+      blah:
+        files: [
+          {
+            expand: true
+            cwd: 'app/'
+            src: ['**/*.coffee']
+            dest: 'tmp/'
+            filter: 'isFile'
+          }
+        ]
       dist:
         files: [
           {
@@ -91,16 +94,6 @@ module.exports = (grunt) ->
             filter: 'isFile'
           }
         ]
-      test:
-        files: [
-          {
-            expand: true
-            cwd: 'app/assets/'
-            src: ['**']
-            dest: 'test/public/'
-            filter: 'isFile'
-          }
-        ]
 
     express:
       dev:
@@ -108,12 +101,29 @@ module.exports = (grunt) ->
           port: 4040
           script: 'server.js'
 
+    # handlebars:
+    #   dist:
+    #     files: grunt.file.expandMapping(['app/templates/**/*.hbs'], 'tmp/templates/', {
+    #       rename: (destBase, destPath) ->
+    #         return destBase + destPath.split('app/templates/')[1].replace /\.hbs$/, '.js'
+    #     })
+
     handlebars:
-      dist:
-        files: grunt.file.expandMapping(['app/templates/**/*.hbs'], 'tmp/templates/', {
-          rename: (destBase, destPath) ->
-            return destBase + destPath.split('app/templates/')[1].replace /\.hbs$/, '.js'
-        })
+      compile:
+        expand: true
+        cwd: 'app/templates/'
+        src: '**/*.hbs'
+        dest: 'tmp/templates/'
+        ext: '.js'
+        options:
+          commonjs: true
+          node: true
+
+    # handlebars:
+    #   options:
+    #     commonjs: true
+    #   files:
+    #     'tmp/foo.js': ['app/templates/*.hbs']
 
     livereload:
       options:
@@ -212,23 +222,9 @@ module.exports = (grunt) ->
         options:
           debounceDelay: 250
 
-  #grunt.loadNpmTasks 'grunt-bower-task'
-  grunt.loadNpmTasks 'grunt-browserify'
-  grunt.loadNpmTasks 'grunt-contrib-clean'
-  grunt.loadNpmTasks 'grunt-coffeeify'
-  #grunt.loadNpmTasks 'grunt-commonjs'
-  grunt.loadNpmTasks 'grunt-commonjs-handlebars'
-  #grunt.loadNpmTasks 'grunt-contrib-clean'
-  grunt.loadNpmTasks 'grunt-contrib-coffee'
-  #grunt.loadNpmTasks 'grunt-contrib-concat'
-  grunt.loadNpmTasks 'grunt-contrib-copy'
-  #grunt.loadNpmTasks 'grunt-contrib-cssmin'
-  #grunt.loadNpmTasks 'grunt-contrib-jshint'
-  #grunt.loadNpmTasks 'grunt-contrib-stylus'
-  grunt.loadNpmTasks 'grunt-contrib-uglify'
-  #grunt.loadNpmTasks 'grunt-contrib-watch'
-  #grunt.loadNpmTasks 'grunt-express-server'
-  #grunt.loadNpmTasks 'grunt-livereload'
-  #grunt.loadNpmTasks 'grunt-mocha'
+  # Load installed tasks
+  grunt.file.glob
+  .sync('./node_modules/grunt-*/tasks')
+  .forEach(grunt.loadTasks)
 
-  grunt.registerTask 'foo', ['clean', 'handlebars', 'coffee:app', 'browserify:vendor', 'browserify:app', 'copy']
+  grunt.registerTask 'foo', ['clean', 'copy', 'handlebars', 'browserify']
