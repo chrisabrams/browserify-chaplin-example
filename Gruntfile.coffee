@@ -35,14 +35,6 @@ module.exports = (grunt) ->
     clean:
       dist: ['public/', 'tmp/']
 
-    uglify:
-      app:
-        options:
-          report: 'min'
-          preserveComments: 'some'
-        src: 'public/js/app.js'
-        dest: 'public/js/app.js'
-
     concat:
       distCss:
         src: [
@@ -93,6 +85,14 @@ module.exports = (grunt) ->
           ignoreLeaks: false
           timeout: 20000
         run: true
+
+    uglify:
+      app:
+        options:
+          report: 'min'
+          preserveComments: 'some'
+        src: 'public/js/app.js'
+        dest: 'public/js/app.js'
 
     watch:
       assets:
